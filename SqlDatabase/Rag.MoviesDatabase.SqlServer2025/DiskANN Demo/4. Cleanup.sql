@@ -1,0 +1,3 @@
+﻿DROP INDEX MoviesVectorDiskANNIndex ON Movie
+DROP PROCEDURE RunVectorSearchANN
+DROP PROCEDURE AskQuestionANN
