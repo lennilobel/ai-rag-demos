@@ -123,6 +123,7 @@
     <Folder Include="Stored Procedures" />
     <Folder Include="Tables" />
     <Folder Include="Types" />
+    <Folder Include="Deployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Functions\GetMoviesJsonUdf.sql" />
@@ -147,6 +148,6 @@
     <Build Include="Stored Procedures\DeleteMovie.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ProjectToSqlServer2022.scmp" />
+    <None Include="Deployment\rag-demo-3l.publish.xml" />
   </ItemGroup>
 </Project>
