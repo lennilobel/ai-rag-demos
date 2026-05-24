@@ -21,12 +21,6 @@ BEGIN
     DECLARE @TotalCount int = (SELECT COUNT(*) FROM OPENJSON(@MoviesJson))
 	DECLARE @Message varchar(max)
 
-	DECLARE @MovieVectors table (
-        MovieId int,
-		VectorValueId int,
-		VectorValue float
-	)
-
     WHILE @CurrentPosition < @TotalCount BEGIN
 
 		BEGIN TRY
@@ -57,20 +51,7 @@ BEGIN
 			CLOSE curMovies
 			DEALLOCATE curMovies
 
-			-- Vectorize the batch
-			DELETE FROM @MovieVectors
-
-			INSERT INTO @MovieVectors
 			EXEC VectorizeMoviesBatch @MoviesBatchJson
-
-			-- Save the vectors
-			INSERT INTO MovieVector
-			SELECT
-				MovieId,
-				VectorValueId,
-				VectorValue
-			FROM
-				@MovieVectors
 
 		END TRY
 
