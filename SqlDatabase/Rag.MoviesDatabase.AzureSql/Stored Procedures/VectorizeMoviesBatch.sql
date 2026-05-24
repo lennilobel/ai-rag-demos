@@ -3,7 +3,7 @@
 AS
 BEGIN
 
-    DECLARE @MoviesPayload nvarchar(max)
+    DECLARE @MoviesPayload varchar(max)
 
     SELECT @MoviesPayload =
         JSON_OBJECT(
@@ -11,8 +11,9 @@ BEGIN
                 '[' + STRING_AGG(
                     '"' + STRING_ESCAPE(CONVERT(nvarchar(max), value), 'json') + '"',
                     ','
-                ) + ']'
-            )
+                ) WITHIN GROUP (ORDER BY CONVERT(int, [key])) + ']'
+            ),
+            'dimensions': 1536
         )
     FROM OPENJSON(@MoviesBatchJson)
 
@@ -59,4 +60,5 @@ BEGIN
         Movie AS m
         INNER JOIN MoviesCte AS mb ON mb.MovieId = m.MovieId
         INNER JOIN EmbeddingsCte AS e ON e.MovieIndex = mb.MovieIndex
+
 END
