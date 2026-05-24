@@ -91,8 +91,6 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 
 			if (!base.RagProvider.UsesChangeEventStreaming)
 			{
-				//ConsoleHelper.WriteHeading("Vectorize Updated Data", ConsoleHelper.UserColor);
-
 				var localFilename = base.RagProvider.GetDataFileLocalPath(base.RagProvider.SqlConfig.JsonUpdateDataFilename);
 				var documents = JsonConvert.DeserializeObject<JArray>(File.ReadAllText(localFilename));
 				var movieIds = documents.Select(d => ((JObject)d)["id"].Value<int>()).ToArray();

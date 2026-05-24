@@ -170,7 +170,4 @@
   <ItemGroup>
     <None Include="Deployment\rag-demo-3l.publish.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <PostDeploy Include="Deployment\PostDeployment.sql" />
-  </ItemGroup>
 </Project>

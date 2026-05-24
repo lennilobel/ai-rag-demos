@@ -5,8 +5,8 @@ GO
 IF NOT EXISTS (SELECT 1 FROM sys.database_scoped_credentials WHERE name = N'BlobStorageCredential')
     CREATE DATABASE SCOPED CREDENTIAL BlobStorageCredential
     WITH
-        IDENTITY = 'SHARED ACCESS SIGNATURE',   -- SAS token for Blob, Object, Read access (expires 5/24/2046)
-        SECRET = 'sv=2026-02-06&ss=b&srt=o&sp=r&se=2046-05-24T07:57:47Z&st=2026-05-23T23:42:47Z&spr=https&sig=McQy0WYUcBJUuqIVr7QHLpTvA8hkfrvxxv%2FQxrD%2B470%3D'
+        IDENTITY = 'SHARED ACCESS SIGNATURE',
+        SECRET = '$(StorageSasToken)'
 GO
 
 IF NOT EXISTS (SELECT 1 FROM sys.external_data_sources WHERE name = N'BlobStorageContainer')

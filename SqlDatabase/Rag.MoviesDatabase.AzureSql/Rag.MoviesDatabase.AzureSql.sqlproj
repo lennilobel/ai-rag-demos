@@ -163,4 +163,14 @@
   <ItemGroup>
     <PostDeploy Include="Deployment\PostDeployment.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <SqlCmdVariable Include="CesSasToken">
+      <DefaultValue>&lt;secret&gt;</DefaultValue>
+      <Value>$(SqlCmdVar__2)</Value>
+    </SqlCmdVariable>
+    <SqlCmdVariable Include="StorageSasToken">
+      <DefaultValue>&lt;secret&gt;</DefaultValue>
+      <Value>$(SqlCmdVar__1)</Value>
+    </SqlCmdVariable>
+  </ItemGroup>
 </Project>
