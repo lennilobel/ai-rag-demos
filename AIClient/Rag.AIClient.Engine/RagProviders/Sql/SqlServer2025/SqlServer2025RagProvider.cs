@@ -17,8 +17,6 @@ namespace Rag.AIClient.Engine.RagProviders.Sql.SqlServer
 
 		public override string EntityTitleFieldName => "Title";
 
-		public override string GetDataFilePath(string filename) => $"/tempvol/{filename}";
-		
         public override IDataPopulator GetDataPopulator() => new SqlServer2025DataPopulator(this);
 
         public override IDataVectorizer GetDataVectorizer() => new SqlServer2025DataVectorizer(this);

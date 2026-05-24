@@ -1,7 +1,0 @@
-﻿CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Str0ngP@$$w0rd'
-GO
-
-CREATE DATABASE SCOPED CREDENTIAL BlobStorageCredential
-	WITH IDENTITY = 'SHARED ACCESS SIGNATURE',	-- SAS token for Blob, Object, Read access (expires 8/13/2026)
-	SECRET = 'sv=2022-11-02&ss=b&srt=o&sp=r&se=2026-08-13T20:00:58Z&st=2024-08-13T12:00:58Z&spr=https&sig=1u6aOJE%2B1pwRDB8r5nKMEylcNgUl77jiIeaDkWKIOVA%3D'
-GO

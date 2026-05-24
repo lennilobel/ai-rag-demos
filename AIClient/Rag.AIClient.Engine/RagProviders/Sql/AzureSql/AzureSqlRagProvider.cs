@@ -13,6 +13,8 @@ namespace Rag.AIClient.Engine.RagProviders.Sql.AzureSql
 		
         public override AppConfig.SqlConfig SqlConfig => Shared.AppConfig.AzureSql;
 
+		public override bool UsesChangeEventStreaming => true;
+
 		public override string EntityTitleFieldName => "Title";
 		
         public override string GetDataFilePath(string filename) => filename;

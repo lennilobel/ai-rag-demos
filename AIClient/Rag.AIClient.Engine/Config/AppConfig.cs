@@ -14,7 +14,6 @@ namespace Rag.AIClient.Engine.Config
 		public SqlConfig SqlServer2022 { get; set; }
 		public SqlConfig SqlServer2025 { get; set; }
 		public SqlConfig AzureSql { get; set; }
-		public SqlConfig AzureSqlPreview { get; set; }
 		public class SqlConfig
 		{
 			public string ServerName { get; set; }

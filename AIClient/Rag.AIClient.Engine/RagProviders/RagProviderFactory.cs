@@ -33,7 +33,6 @@ namespace Rag.AIClient.Engine.RagProviders
 				RagProviderType.SqlServer2022 => new SqlServer2022RagProvider(),
 				RagProviderType.SqlServer2025 => new SqlServer2025RagProvider(),
 				RagProviderType.AzureSql => new AzureSqlRagProvider(),
-				RagProviderType.AzureSqlPreview => new AzureSqlPreviewRagProvider(),
 				RagProviderType.CosmosDb => new CosmosDbRagProvider(),
 				RagProviderType.MongoDb => new MongoDbRagProvider(),
 				RagProviderType.External => GetExternalRagProvider(),

@@ -272,10 +272,6 @@ namespace Rag.AIClient
 			await InitializeAndVectorize(RagProviderType.AzureSql, OpenAIEmbeddingModelType.TextEmbedding3Small);
 			await InitializeAndVectorize(RagProviderType.AzureSql, OpenAIEmbeddingModelType.TextEmbeddingAda002);
 
-			//await InitializeAndVectorize(RagProviderType.AzureSqlPreview, EmbeddingModelType.TextEmbedding3Large);
-			await InitializeAndVectorize(RagProviderType.AzureSqlPreview, OpenAIEmbeddingModelType.TextEmbedding3Small);
-			await InitializeAndVectorize(RagProviderType.AzureSqlPreview, OpenAIEmbeddingModelType.TextEmbeddingAda002);
-
 			await InitializeAndVectorize(RagProviderType.CosmosDb, OpenAIEmbeddingModelType.TextEmbedding3Large);
 			await InitializeAndVectorize(RagProviderType.CosmosDb, OpenAIEmbeddingModelType.TextEmbedding3Small);
 			await InitializeAndVectorize(RagProviderType.CosmosDb, OpenAIEmbeddingModelType.TextEmbeddingAda002);

@@ -33,7 +33,7 @@ BEGIN
 		DECLARE @Message varchar(max) = CONCAT('Vectorizing movie: ', @Title, ' (', @MovieId, ')')
 		RAISERROR(@Message, 0, 1) WITH NOWAIT
 
-		DECLARE @MovieVector vector(1536)	-- *Preview*
+		DECLARE @MovieVector vector(1536)
 
 		BEGIN TRY
 
