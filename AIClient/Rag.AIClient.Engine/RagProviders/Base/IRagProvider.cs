@@ -12,6 +12,7 @@ namespace Rag.AIClient.Engine.RagProviders.Base
 		AppConfig.MongoDbConfig MongoDbConfig { get; }
 		string SqlConnectionString { get; }
 		bool UsesChangeEventStreaming { get; }
+		bool UsesDatabaseConfiguration { get; }
 		string EntityTitleFieldName { get; }
 
 		string GetDataFilePath(string filename);

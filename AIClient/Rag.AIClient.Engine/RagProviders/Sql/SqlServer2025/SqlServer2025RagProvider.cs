@@ -1,19 +1,16 @@
 ﻿using Rag.AIClient.Engine.Config;
 using Rag.AIClient.Engine.RagProviders.Base;
+using Rag.AIClient.Engine.RagProviders.Sql.SqlServer;
 
-namespace Rag.AIClient.Engine.RagProviders.Sql.SqlServer
+namespace Rag.AIClient.Engine.RagProviders.Sql.SqlServer2025
 {
-    public class SqlServer2025RagProvider : RagProviderBase
+    public class SqlServer2025RagProvider : SqlRagProviderBase
     {
         public override string ProviderName => "SQL Server 2025";
 
-        public override string DatabaseName => SqlConfig.DatabaseName + GetDatabaseNameSuffix();
-
-		public override string ServerName => SqlConfig.ServerName;
-		
         public override AppConfig.SqlConfig SqlConfig => Shared.AppConfig.SqlServer2025;
 
-		public override bool UsesChangeEventStreaming => true;
+		public override bool UsesDatabaseConfiguration => true;
 
 		public override string EntityTitleFieldName => "Title";
 

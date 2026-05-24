@@ -3,6 +3,7 @@ using Rag.AIClient.Engine.RagProviders.NoSql.CosmosDb;
 using Rag.AIClient.Engine.RagProviders.NoSql.MongoDb;
 using Rag.AIClient.Engine.RagProviders.Sql.AzureSql;
 using Rag.AIClient.Engine.RagProviders.Sql.SqlServer;
+using Rag.AIClient.Engine.RagProviders.Sql.SqlServer2025;
 using System;
 using System.Linq;
 using System.Reflection;

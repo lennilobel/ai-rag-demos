@@ -1,20 +1,12 @@
 ﻿using Rag.AIClient.Engine.RagProviders.Base;
-using System.Threading.Tasks;
 
-namespace Rag.AIClient.Engine.RagProviders.Sql
+namespace Rag.AIClient.Engine.RagProviders.Sql.AzureSql
 {
 	public class AzureSqlDataPopulator : SqlDataPopulatorBase
 	{
 		public AzureSqlDataPopulator(IRagProvider ragProvider)
 			: base(ragProvider)
 		{
-		}
-
-		public override async Task InitializeData()
-		{
-			await base.InitializeData();
-
-			await base.LoadConfiguration();
 		}
 
 	}

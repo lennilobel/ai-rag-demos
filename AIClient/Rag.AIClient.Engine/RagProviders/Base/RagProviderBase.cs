@@ -41,6 +41,8 @@ namespace Rag.AIClient.Engine.RagProviders.Base
 
 		public virtual bool UsesChangeEventStreaming => false;
 
+		public virtual bool UsesDatabaseConfiguration => false;
+
 		public abstract string EntityTitleFieldName { get; }
 
 		public virtual string GetDataFilePath(string filename) => this.GetDataFileLocalPath(filename);

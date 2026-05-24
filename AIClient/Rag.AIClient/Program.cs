@@ -76,16 +76,12 @@ namespace Rag.AIClient
 				{ "UC", UpdateConfiguration },
 				{ "AC", ViewAppConfig },
 				{ "IV", InitializeAndVectorize },
-				{ "ECES", EnableChangeEventStreaming },
-				{ "DCES", DisableChangeEventStreaming },
 			};
 		}
 
 		private static void ShowMenu()
 		{
 			var provider = RagProviderFactory.GetRagProvider();
-			var enableCes = provider.UsesChangeEventStreaming ? "• ECES - Enable Change Event Streaming" : null;
-			var disableCes = provider.UsesChangeEventStreaming ? "• DCES - Disable Change Event Streaming" : null;
 
 			Console.OutputEncoding = Encoding.UTF8;
 			ConsoleHelper.Clear();
@@ -107,8 +103,8 @@ namespace Rag.AIClient
 			Console.WriteLine($" • VD - Vectorize data         • CMS  - Change AI models source");
 			Console.WriteLine($" • UD - Update data            • CEM  - Change Azure OpenAI embedding model");
 			Console.WriteLine($" • RD - Reset data             • UC   - Update configuration");
-			Console.WriteLine($" • HW - Hello RAG World demo   {enableCes}");
-			Console.WriteLine($" • AI - AI Assistant demo      {disableCes}");
+			Console.WriteLine($" • HW - Hello RAG World demo");
+			Console.WriteLine($" • AI - AI Assistant demo");
 			Console.WriteLine($" • Q  - Quit");
 			Console.WriteLine();
 			ConsoleHelper.ResetColor();
@@ -312,26 +308,6 @@ namespace Rag.AIClient
 		//	var updatedContent = System.Text.RegularExpressions.Regex.Replace(content, @"""id"":\s*(\d+)", @"""id"": ""$1""");
 		//	System.IO.File.WriteAllText(filePath, updatedContent);
 		//}
-
-		private static async Task EnableChangeEventStreaming()
-		{
-			var started = DateTime.Now;
-
-			ConsoleHelper.WriteLine("Enabling Change Event Streaming", ConsoleHelper.UserColor);
-			await SqlDataAccess.RunStoredProcedure("EnableDisableCES", [("Action", "Enable")]);
-
-			Console.WriteLine($"Completed in {DateTime.Now.Subtract(started)}");
-		}
-
-		private static async Task DisableChangeEventStreaming()
-		{
-			var started = DateTime.Now;
-
-			ConsoleHelper.WriteLine("Disabling Change Event Streaming", ConsoleHelper.UserColor);
-			await SqlDataAccess.RunStoredProcedure("EnableDisableCES", [("Action", "Disable")]);
-
-			Console.WriteLine($"Completed in {DateTime.Now.Subtract(started)}");
-		}
 
 		public static AppConfig LoadConfiguration(bool includeUserSecrets)
 		{

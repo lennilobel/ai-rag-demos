@@ -1,7 +1,11 @@
-﻿using Rag.AIClient.Engine.AIModels;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Rag.AIClient.Engine.AIModels;
 using Rag.AIClient.Engine.RagProviders.Base;
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Rag.AIClient.Engine.RagProviders.Sql
@@ -29,6 +33,8 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 			var filename = base.RagProvider.GetDataFilePath(base.RagProvider.SqlConfig.JsonInitialDataFilename);
 			await this.LoadDataFromJsonFile(filename);
 
+			await this.LoadConfiguration();
+
 			await this.EnableChangeEventStreaming();
 
 			var elapsed = DateTime.Now.Subtract(started);
@@ -36,7 +42,7 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 			ConsoleHelper.WriteLine($"Data loaded in {elapsed}", ConsoleHelper.UserColor);
 		}
 
-		protected async Task LoadDataFromJsonFile(string filename)
+		private async Task LoadDataFromJsonFile(string filename)
 		{
 			ConsoleHelper.WriteLine();
 			ConsoleHelper.WriteLine($"Loading data from {filename}", ConsoleHelper.UserColor);
@@ -50,8 +56,13 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 			);
 		}
 
-		protected async Task LoadConfiguration()
+		private async Task LoadConfiguration()
 		{
+			if (!base.RagProvider.UsesDatabaseConfiguration)
+			{
+				return;
+			}
+
 			ConsoleHelper.WriteHeading("Load Configuration", ConsoleHelper.UserColor);
 
 			ConsoleHelper.WriteLine("Loading configuration", ConsoleHelper.UserColor);
@@ -78,6 +89,18 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 			var remoteFilename = base.RagProvider.GetDataFilePath(base.RagProvider.SqlConfig.JsonUpdateDataFilename);
 			await this.LoadDataFromJsonFile(remoteFilename);
 
+			if (!base.RagProvider.UsesChangeEventStreaming)
+			{
+				//ConsoleHelper.WriteHeading("Vectorize Updated Data", ConsoleHelper.UserColor);
+
+				var localFilename = base.RagProvider.GetDataFileLocalPath(base.RagProvider.SqlConfig.JsonUpdateDataFilename);
+				var documents = JsonConvert.DeserializeObject<JArray>(File.ReadAllText(localFilename));
+				var movieIds = documents.Select(d => ((JObject)d)["id"].Value<int>()).ToArray();
+
+				var vectorizer = base.RagProvider.GetDataVectorizer();
+				await vectorizer.VectorizeData(movieIds);
+			}
+
 			var elapsed = DateTime.Now.Subtract(started);
 			ConsoleHelper.WriteLine();
 			ConsoleHelper.WriteLine($"Data updated in {elapsed}", ConsoleHelper.InfoColor);
@@ -96,20 +119,24 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 
 		private async Task DisableChangeEventStreaming()
 		{
-			if (base.RagProvider.UsesChangeEventStreaming)
+			if (!base.RagProvider.UsesChangeEventStreaming)
 			{
-				ConsoleHelper.WriteLine("Disabling Change Event Streaming", ConsoleHelper.UserColor);
-				await SqlDataAccess.RunStoredProcedure("EnableDisableCES", [("Action", "Disable")]);
+				return;
 			}
+
+			ConsoleHelper.WriteLine("Disabling Change Event Streaming", ConsoleHelper.UserColor);
+			await SqlDataAccess.RunStoredProcedure("EnableDisableCES", [("Action", "Disable")]);
 		}
 
 		private async Task EnableChangeEventStreaming()
 		{
-			if (base.RagProvider.UsesChangeEventStreaming)
+			if (!base.RagProvider.UsesChangeEventStreaming)
 			{
-				ConsoleHelper.WriteLine("Enabling Change Event Streaming", ConsoleHelper.UserColor);
-				await SqlDataAccess.RunStoredProcedure("EnableDisableCES", [("Action", "Enable")]);
+				return;
 			}
+
+			ConsoleHelper.WriteLine("Enabling Change Event Streaming", ConsoleHelper.UserColor);
+			await SqlDataAccess.RunStoredProcedure("EnableDisableCES", [("Action", "Enable")]);
 		}
 
 	}

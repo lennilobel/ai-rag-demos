@@ -3,20 +3,16 @@ using Rag.AIClient.Engine.RagProviders.Base;
 
 namespace Rag.AIClient.Engine.RagProviders.Sql.AzureSql
 {
-    public class AzureSqlRagProvider : RagProviderBase
+    public class AzureSqlRagProvider : SqlRagProviderBase
     {
         public override string ProviderName => "Azure SQL Database";
 
-        public override string DatabaseName => SqlConfig.DatabaseName + GetDatabaseNameSuffix();
-
-        public override string ServerName => SqlConfig.ServerName;
-		
         public override AppConfig.SqlConfig SqlConfig => Shared.AppConfig.AzureSql;
 
 		public override bool UsesChangeEventStreaming => true;
 
-		public override string EntityTitleFieldName => "Title";
-		
+		public override bool UsesDatabaseConfiguration => true;
+
         public override string GetDataFilePath(string filename) => filename;
 
         public override IDataPopulator GetDataPopulator() => new AzureSqlDataPopulator(this);
