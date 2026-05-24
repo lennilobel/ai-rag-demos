@@ -4,12 +4,11 @@ AS
 BEGIN
 
     SELECT TOP 5
-        MovieJson = dbo.GetMoviesJsonUdf(MovieId),
-        CosineDistance = VECTOR_DISTANCE('cosine', @Vector, Vector)
+        MovieJson = dbo.GetMoviesJsonUdf(m.MovieId),
+        CosineDistance = VECTOR_DISTANCE('cosine', @Vector, mv.Vector)
     FROM
-        Movie
-    WHERE
-        Vector IS NOT NULL
+        MovieVector AS mv
+        INNER JOIN Movie AS m ON mv.MovieId = m.MovieId
     ORDER BY
         CosineDistance
 

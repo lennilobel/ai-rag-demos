@@ -154,9 +154,13 @@
     <None Include="Demos\Hello World Demo\4. Run Vector Searches.sql" />
     <None Include="Demos\Hello World Demo\5. Cleanup.sql" />
     <None Include="Demos\Hello World Demo\6. Drop Database.sql" />
+    <Build Include="Tables\MovieVector.sql" />
     <Build Include="Stored Procedures\EnableDisableCES.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Deployment\PreDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Deployment\PostDeployment.sql" />
   </ItemGroup>
 </Project>

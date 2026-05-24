@@ -24,11 +24,15 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 
 			ConsoleHelper.WriteHeading("Load Data", ConsoleHelper.UserColor);
 
+			await this.DisableChangeEventStreaming();
+
 			ConsoleHelper.WriteLine("Deleting all data", ConsoleHelper.UserColor);
 			await SqlDataAccess.RunStoredProcedure("DeleteAllData");
 
 			var filename = base.RagProvider.GetDataFilePath(base.RagProvider.SqlConfig.JsonInitialDataFilename);
 			await this.LoadDataFromJsonFile(filename);
+
+			await this.EnableChangeEventStreaming();
 
 			var elapsed = DateTime.Now.Subtract(started);
 			ConsoleHelper.WriteLine();
@@ -80,7 +84,27 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 
 			ConsoleHelper.WriteHeading("Reset Data", ConsoleHelper.UserColor);
 
+			await this.DisableChangeEventStreaming();
 			await SqlDataAccess.RunStoredProcedure("DeleteStarWarsTrilogy");
+			await this.EnableChangeEventStreaming();
+		}
+
+		private async Task DisableChangeEventStreaming()
+		{
+			if (base.RagProvider.UsesChangeEventStreaming)
+			{
+				ConsoleHelper.WriteLine("Disabling Change Event Streaming", ConsoleHelper.UserColor);
+				await SqlDataAccess.RunStoredProcedure("EnableDisableCES", [("Action", "Disable")]);
+			}
+		}
+
+		private async Task EnableChangeEventStreaming()
+		{
+			if (base.RagProvider.UsesChangeEventStreaming)
+			{
+				ConsoleHelper.WriteLine("Enabling Change Event Streaming", ConsoleHelper.UserColor);
+				await SqlDataAccess.RunStoredProcedure("EnableDisableCES", [("Action", "Enable")]);
+			}
 		}
 
 	}

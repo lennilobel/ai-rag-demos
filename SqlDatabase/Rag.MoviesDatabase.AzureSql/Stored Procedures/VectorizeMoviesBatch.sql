@@ -65,14 +65,25 @@ BEGIN
             MovieIndex int '$.index',
             Embedding nvarchar(max) '$.embedding' AS JSON           -- each movie's vector is retrieved from the embedding array in the data array of each result
         )
-    )
-    -- Update the Movie table with the generated vectors.
+    ),
     -- Join the source movies to the returned embeddings using the shared positional index.
-    UPDATE m
-        SET Vector = e.Vector
-    FROM
-        Movie AS m
-        INNER JOIN MoviesCte AS mb ON mb.MovieId = m.MovieId
-        INNER JOIN EmbeddingsCte AS e ON e.MovieIndex = mb.MovieIndex
+    VectorsCte AS (
+        SELECT
+            mb.MovieId,
+            e.Vector
+        FROM
+            MoviesCte AS mb
+            INNER JOIN EmbeddingsCte AS e ON e.MovieIndex = mb.MovieIndex
+    )
+    -- Insert/update the MovieVector table with the generated vectors.
+    MERGE MovieVector AS t
+        USING VectorsCte AS s
+        ON t.MovieId = s.MovieId
+    WHEN MATCHED THEN
+        UPDATE SET Vector = s.Vector
+    WHEN NOT MATCHED THEN
+        INSERT (MovieId, Vector)
+        VALUES (s.MovieId, s.Vector)
+    ;
 
 END
