@@ -14,7 +14,6 @@ BEGIN
 		DELETE FROM MovieProductionCompany WHERE MovieId = @MovieId
 		DELETE FROM MovieProductionCountry WHERE MovieId = @MovieId
 		DELETE FROM MovieSpokenLanguage WHERE MovieId = @MovieId
-		DELETE FROM MovieVector WHERE MovieId = @MovieId
 		DELETE FROM Movie WHERE MovieId = @MovieId
 
 	END
