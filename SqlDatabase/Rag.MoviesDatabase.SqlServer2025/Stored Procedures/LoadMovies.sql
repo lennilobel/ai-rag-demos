@@ -90,8 +90,7 @@ BEGIN
 		Title,
 		Video,
 		VoteAverage,
-		VoteCount,
-		Vector = NULL
+		VoteCount
 	FROM
 		#Movie AS t
 	WHERE

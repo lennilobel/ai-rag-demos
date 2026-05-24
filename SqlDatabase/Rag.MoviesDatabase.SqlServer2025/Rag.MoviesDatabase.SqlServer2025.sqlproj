@@ -158,6 +158,8 @@
     <None Include="Demos\Hello World Demo\6. Drop Database.sql" />
     <PreDeploy Include="Deployment\PreDeployment.sql" />
     <Build Include="Functions\GetMoviesJsonUdf.sql" />
+    <Build Include="Tables\MovieVector.sql" />
+    <Build Include="Stored Procedures\EnableDisableCES.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="AzureOpenAIKey">
@@ -167,5 +169,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Deployment\rag-demo-3l.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Deployment\PostDeployment.sql" />
   </ItemGroup>
 </Project>

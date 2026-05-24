@@ -10,6 +10,7 @@ BEGIN
 	TRUNCATE TABLE	MovieProductionCountry
 	TRUNCATE TABLE	MovieProductionCompany
 	TRUNCATE TABLE	MovieGenre
+	DELETE FROM		MovieVector
 	DELETE FROM		SpokenLanguage
 	DELETE FROM		ProductionCountry
 	DELETE FROM		ProductionCompany

@@ -1,10 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Rag.AIClient.Engine.AIModels;
 using Rag.AIClient.Engine.RagProviders.Base;
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Rag.AIClient.Engine.RagProviders.Sql
@@ -53,6 +50,23 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 			);
 		}
 
+		protected async Task LoadConfiguration()
+		{
+			ConsoleHelper.WriteHeading("Load Configuration", ConsoleHelper.UserColor);
+
+			ConsoleHelper.WriteLine("Loading configuration", ConsoleHelper.UserColor);
+
+			await SqlDataAccess.RunStoredProcedure(
+				storedProcedureName: "LoadConfig",
+				storedProcedureParameters:
+				[
+					("@OpenAIEndpoint", Shared.AppConfig.AzureOpenAI.Endpoint),
+					("@OpenAIApiKey", Shared.AppConfig.AzureOpenAI.ApiKey),
+					("@OpenAIDeploymentName", AIModelsSourceFactory.GetEmbeddingModelName()),
+				]
+			);
+		}
+
 		public override async Task UpdateData()
 		{
 			Debugger.Break();
@@ -61,17 +75,8 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 
 			ConsoleHelper.WriteHeading("Update Data", ConsoleHelper.UserColor);
 
-			// Load additional data into the database
 			var remoteFilename = base.RagProvider.GetDataFilePath(base.RagProvider.SqlConfig.JsonUpdateDataFilename);
 			await this.LoadDataFromJsonFile(remoteFilename);
-
-			// Vectorize the new data
-			var localFilename = base.RagProvider.GetDataFileLocalPath(base.RagProvider.SqlConfig.JsonUpdateDataFilename);
-			var documents = JsonConvert.DeserializeObject<JArray>(File.ReadAllText(localFilename));
-			var movieIds = documents.Select(d => ((JObject)d)["id"].Value<int>()).ToArray();
-
-			var vectorizer = base.RagProvider.GetDataVectorizer();
-			await vectorizer.VectorizeData(movieIds);
 
 			var elapsed = DateTime.Now.Subtract(started);
 			ConsoleHelper.WriteLine();

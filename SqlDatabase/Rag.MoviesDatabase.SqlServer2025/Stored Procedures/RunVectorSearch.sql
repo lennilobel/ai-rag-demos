@@ -1,26 +1,15 @@
 ﻿CREATE PROCEDURE RunVectorSearch
-	@Vector vector(1536)
+    @Vector vector(1536)
 AS
 BEGIN
 
-	DROP TABLE IF EXISTS #SimilarityResults
+    SELECT TOP 5
+        MovieJson = dbo.GetMoviesJsonUdf(m.MovieId),
+        CosineDistance = VECTOR_DISTANCE('cosine', @Vector, mv.Vector)
+    FROM
+        MovieVector AS mv
+        INNER JOIN Movie AS m ON mv.MovieId = m.MovieId
+    ORDER BY
+        CosineDistance
 
-	SELECT
-		MovieId,
-		CosineDistance = VECTOR_DISTANCE('cosine', @Vector, Vector)
-	INTO
-		#SimilarityResults
-	FROM
-		Movie
-	ORDER BY
-		CosineDistance
-
-	SELECT TOP 5
-		MovieJson = dbo.GetMoviesJsonUdf(MovieId),
-		CosineDistance
-	FROM
-		#SimilarityResults
-	ORDER BY
-		CosineDistance
-	
 END

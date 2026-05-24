@@ -52,9 +52,18 @@ BEGIN
 
 		END CATCH
 
-		UPDATE Movie
-		SET Vector = @MovieVector
-		WHERE MovieId = @MovieId
+		MERGE MovieVector AS t
+			USING (
+				SELECT
+					MovieId = @MovieId,
+					Vector = @MovieVector
+			) AS s ON t.MovieId = s.MovieId
+			WHEN MATCHED THEN
+				UPDATE SET Vector = s.Vector
+			WHEN NOT MATCHED THEN
+				INSERT (MovieId, Vector)
+				VALUES (s.MovieId, s.Vector)
+		;
 
 		FETCH NEXT FROM curMovies INTO @MovieJson
 

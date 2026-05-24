@@ -1,5 +1,4 @@
-﻿using Rag.AIClient.Engine.AIModels;
-using Rag.AIClient.Engine.RagProviders.Base;
+﻿using Rag.AIClient.Engine.RagProviders.Base;
 using System.Threading.Tasks;
 
 namespace Rag.AIClient.Engine.RagProviders.Sql
@@ -15,24 +14,7 @@ namespace Rag.AIClient.Engine.RagProviders.Sql
 		{
 			await base.InitializeData();
 
-			await this.LoadConfiguration();
-		}
-
-		private async Task LoadConfiguration()
-		{
-			ConsoleHelper.WriteHeading("Load Configuration", ConsoleHelper.UserColor);
-
-			ConsoleHelper.WriteLine("Loading configuration", ConsoleHelper.UserColor);
-
-			await SqlDataAccess.RunStoredProcedure(
-				storedProcedureName: "LoadConfig",
-				storedProcedureParameters:
-				[
-					("@OpenAIEndpoint", Shared.AppConfig.AzureOpenAI.Endpoint),
-					("@OpenAIApiKey", Shared.AppConfig.AzureOpenAI.ApiKey),
-					("@OpenAIDeploymentName", AIModelsSourceFactory.GetEmbeddingModelName()),
-				]
-			);
+			await base.LoadConfiguration();
 		}
 
 	}
