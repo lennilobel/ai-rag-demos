@@ -16,4 +16,5 @@
 	Video				bit,
 	VoteAverage			decimal(3, 1),
 	VoteCount			int,
+	Vector				vector(1536),
 )

@@ -6,7 +6,6 @@ BEGIN
 
 	SET NOCOUNT ON
 
-	TRUNCATE TABLE	MovieVector
 	TRUNCATE TABLE	MovieSpokenLanguage
 	TRUNCATE TABLE	MovieProductionCountry
 	TRUNCATE TABLE	MovieProductionCompany

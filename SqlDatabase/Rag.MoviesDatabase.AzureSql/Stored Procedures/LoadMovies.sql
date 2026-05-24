@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE LoadMovies
+﻿CREATE or alter PROCEDURE LoadMovies
 	@Filename varchar(max)
 AS
 BEGIN
@@ -96,7 +96,8 @@ BEGIN
 		Title,
 		Video,
 		VoteAverage,
-		VoteCount
+		VoteCount,
+		MovieVector = NULL
 	FROM
 		#Movie AS t
 	WHERE

@@ -3,10 +3,9 @@
 AS
 BEGIN
 
-	DECLARE @Vector VectorUdt
+	DECLARE @Vector vector(1536)
 
-	INSERT INTO @Vector
-		EXEC VectorizeText @Question
+	EXEC VectorizeText @Question, @Vector OUTPUT
 
 	EXEC RunVectorSearch @Vector
 

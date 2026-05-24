@@ -122,7 +122,6 @@
     <Folder Include="Functions" />
     <Folder Include="Stored Procedures" />
     <Folder Include="Tables" />
-    <Folder Include="Types" />
     <Folder Include="Deployment" />
     <Folder Include="Demos" />
     <Folder Include="Demos\Hello World Demo" />
@@ -142,12 +141,9 @@
     <Build Include="Tables\MovieProductionCompany.sql" />
     <Build Include="Tables\MovieProductionCountry.sql" />
     <Build Include="Tables\MovieSpokenLanguage.sql" />
-    <Build Include="Tables\MovieVector.sql" />
     <Build Include="Tables\ProductionCompany.sql" />
     <Build Include="Tables\ProductionCountry.sql" />
     <Build Include="Tables\SpokenLanguage.sql" />
-    <Build Include="Types\MovieVectorsUdt.sql" />
-    <Build Include="Types\VectorUdt.sql" />
     <Build Include="Stored Procedures\RunVectorSearch.sql" />
     <Build Include="Tables\AppConfig.sql" />
     <Build Include="Stored Procedures\LoadConfig.sql" />
@@ -158,6 +154,7 @@
     <None Include="Demos\Hello World Demo\4. Run Vector Searches.sql" />
     <None Include="Demos\Hello World Demo\5. Cleanup.sql" />
     <None Include="Demos\Hello World Demo\6. Drop Database.sql" />
+    <Build Include="Stored Procedures\EnableDisableCES.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Deployment\PreDeployment.sql" />
