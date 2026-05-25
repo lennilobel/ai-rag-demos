@@ -4,6 +4,7 @@ using Rag.AIClient.Engine;
 using Rag.AIClient.Engine.AIModels;
 using Rag.AIClient.Engine.Config;
 using Rag.AIClient.Engine.RagProviders;
+using Rag.SqlDatabasePublisher;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -336,8 +337,9 @@ namespace Rag.AIClient
 
 		private static async Task PublishDatabase()
 		{
+			var appConfig = LoadConfiguration(includeUserSecrets: true);
 			var publisher = new DatabasePublisher();
-			await publisher.Publish();
+			await publisher.Publish(appConfig);
 		}
 
 	}

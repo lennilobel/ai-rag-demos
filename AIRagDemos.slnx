@@ -21,5 +21,6 @@
       <Build />
       <Deploy />
     </Project>
+    <Project Path="SqlDatabase/Rag.SqlDatabasePublisher/Rag.SqlDatabasePublisher.csproj" />
   </Folder>
 </Solution>
