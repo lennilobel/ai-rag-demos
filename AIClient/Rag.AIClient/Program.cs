@@ -355,6 +355,8 @@ namespace Rag.AIClient
 				}
 			};
 
+			ConsoleHelper.WriteHeading($"Publish Database {config.DatabaseName} ({config.DatabasePublisherType})", ConsoleHelper.InfoColor);
+
 			await publisher.Publish(config);
 		}
 
@@ -370,14 +372,18 @@ namespace Rag.AIClient
 			}
 		}
 
-		private static DatabasePublisherType GetDatabasePublisherType() =>
-			RagProviderFactory.RagProviderType switch
-			{
-				RagProviderType.SqlServer2022 => DatabasePublisherType.SqlServer2025,
-				RagProviderType.AzureSql => DatabasePublisherType.AzureSql,
-				_ => throw new NotSupportedException($"There is no database publisher type for RAG provider type {RagProviderFactory.RagProviderType}"),
-			};
+		private static DatabasePublisherType GetDatabasePublisherType()
+		{
+			// Get DatabasePublisherType enum value from the current RagProviderType enum value by matching names
+			var ragProviderType = RagProviderFactory.RagProviderType;
 
+			if (Enum.IsDefined(typeof(DatabasePublisherType), ragProviderType.ToString()))
+			{
+				return Enum.Parse<DatabasePublisherType>(ragProviderType.ToString());
+			}
+
+			throw new NotSupportedException($"There is no database publisher type for RAG provider type {ragProviderType}");
+		}
 
 	}
 }

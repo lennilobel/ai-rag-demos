@@ -122,9 +122,8 @@
     <Folder Include="Functions" />
     <Folder Include="Stored Procedures" />
     <Folder Include="Tables" />
-    <Folder Include="Deployment" />
-    <Folder Include="Demos" />
-    <Folder Include="Demos\Hello World Demo" />
+    <Folder Include="Scripts" />
+    <Folder Include="Scripts\Hello World Demo" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Functions\GetMoviesJsonUdf.sql" />
@@ -148,20 +147,16 @@
     <Build Include="Tables\AppConfig.sql" />
     <Build Include="Stored Procedures\LoadConfig.sql" />
     <Build Include="Stored Procedures\VectorizeMoviesBatch.sql" />
-    <None Include="Demos\Hello World Demo\1. Create Database.sql" />
-    <None Include="Demos\Hello World Demo\2. Setup.sql" />
-    <None Include="Demos\Hello World Demo\3. Vectorize Data.sql" />
-    <None Include="Demos\Hello World Demo\4. Run Vector Searches.sql" />
-    <None Include="Demos\Hello World Demo\5. Cleanup.sql" />
-    <None Include="Demos\Hello World Demo\6. Drop Database.sql" />
     <Build Include="Tables\MovieVector.sql" />
     <Build Include="Stored Procedures\EnableDisableCES.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <PreDeploy Include="Deployment\PreDeployment.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <PostDeploy Include="Deployment\PostDeployment.sql" />
+    <None Include="Scripts\Hello World Demo\1. Create Database.sql" />
+    <None Include="Scripts\Hello World Demo\2. Setup.sql" />
+    <None Include="Scripts\Hello World Demo\3. Vectorize Data.sql" />
+    <None Include="Scripts\Hello World Demo\4. Run Vector Searches.sql" />
+    <None Include="Scripts\Hello World Demo\5. Cleanup.sql" />
+    <None Include="Scripts\Hello World Demo\6. Drop Database.sql" />
+    <PostDeploy Include="Scripts\PostDeployment.sql" />
+    <PreDeploy Include="Scripts\PreDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="CesSasToken">

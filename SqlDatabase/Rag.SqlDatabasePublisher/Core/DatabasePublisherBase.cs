@@ -8,13 +8,16 @@ namespace Rag.SqlDatabasePublisher.Core
 {
 	public abstract class DatabasePublisherBase : IDatabasePublisher
 	{
-		public string SqlProjectFile => Path.GetFullPath(@"..\..\..\..\..\SqlDatabase\Rag.MoviesDatabase.AzureSql\Rag.MoviesDatabase.AzureSql.sqlproj");
+		public abstract string SqlProjectFile { get; }
 
 		public async Task Publish(DatabasePublisherConfig config)
 		{
 			Debugger.Break();
 
-			var dacpacPath = this.BuildDatabaseProject();
+			var dacpacFile = this.BuildDatabaseProject();
+
+			Console.WriteLine($"Deploying {dacpacFile}");
+
 			var publishOptions = new PublishOptions
 			{
 				DeployOptions = new()
@@ -24,8 +27,7 @@ namespace Rag.SqlDatabasePublisher.Core
 				GenerateDeploymentReport = true
 			};
 
-			publishOptions.DeployOptions.SqlCommandVariableValues["CesSasToken"] = config.SqlCommandVariables["CesSasToken"];
-			publishOptions.DeployOptions.SqlCommandVariableValues["StorageSasToken"] = config.SqlCommandVariables["StorageSasToken"];
+			this.SetPublishOptions(publishOptions, config);
 
 			var dacServices = new DacServices(config.SqlConnectionString);
 
@@ -34,11 +36,17 @@ namespace Rag.SqlDatabasePublisher.Core
 				Console.WriteLine(e.Message.Message);
 			};
 
-			using var dacpac = DacPackage.Load(dacpacPath);
+			using var dacpac = DacPackage.Load(dacpacFile);
 
 			dacServices.Publish(dacpac, config.DatabaseName, publishOptions);
 
-			Console.WriteLine("Publish complete.");
+			Console.WriteLine("Deployment succeeded");
+			Console.WriteLine();
+		}
+
+		protected virtual void SetPublishOptions(PublishOptions publishOptions, DatabasePublisherConfig config)
+		{
+			// Subclasses can override this method to customize publish options (e.g., SQLCMD variable values) based on the config
 		}
 
 		private string BuildDatabaseProject()
@@ -50,9 +58,10 @@ namespace Rag.SqlDatabasePublisher.Core
 				throw new FileNotFoundException($"Database project file '{sqlprojFile}' not found");
 			}
 
+			Console.WriteLine($"Building {sqlprojFile}");
+
 			var msbuildExe = this.GetMSBuildPath();
-			var configuration = "Debug";
-			var msbuildArgs = $"\"{sqlprojFile}\" /restore /p:Configuration={configuration} /v:minimal";
+			var msbuildArgs = $"\"{sqlprojFile}\" /restore /p:Configuration=Debug /v:minimal";
 
 			var build = Process.Start(new ProcessStartInfo
 			{
@@ -91,17 +100,15 @@ STDERR:
 
 			var projectDir = Path.GetDirectoryName(sqlprojFile)!;
 			var projectName = Path.GetFileNameWithoutExtension(sqlprojFile);
-
-			var dacpacFile = Path.Combine(
-				projectDir,
-				"bin",
-				configuration,
-				$"{projectName}.dacpac");
+			var dacpacFile = Path.Combine(projectDir, "bin\\Debug", $"{projectName}.dacpac");
 
 			if (!File.Exists(dacpacFile))
 			{
 				throw new FileNotFoundException($"Expected dacpac file '{dacpacFile}' was not produced.");
 			}
+
+			Console.WriteLine("Build succeeded");
+			Console.WriteLine();
 
 			return dacpacFile;
 		}
@@ -119,7 +126,7 @@ STDERR:
 				RedirectStandardOutput = true,
 				UseShellExecute = false,
 				CreateNoWindow = true
-			})!;
+			});
 
 			var output = process.StandardOutput.ReadToEnd().Trim();
 			process.WaitForExit();

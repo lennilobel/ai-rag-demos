@@ -14,7 +14,7 @@ IF NOT EXISTS (SELECT 1 FROM sys.database_scoped_credentials WHERE name = N'http
     CREATE DATABASE SCOPED CREDENTIAL [https://lenni-openai.openai.azure.com]
     WITH
         IDENTITY = 'HTTPEndpointHeaders',
-        SECRET = '{"api-key":"$(AzureOpenAIKey)"}'
+        SECRET = '{"api-key":"$(OpenAIApiKey)"}'
 GO
 
 IF EXISTS (SELECT 1 FROM sys.external_models WHERE name = N'MoviesTextEmbeddingModel')

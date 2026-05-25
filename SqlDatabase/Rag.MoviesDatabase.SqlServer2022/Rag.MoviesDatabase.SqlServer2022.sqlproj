@@ -123,7 +123,6 @@
     <Folder Include="Stored Procedures" />
     <Folder Include="Tables" />
     <Folder Include="Types" />
-    <Folder Include="Deployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Functions\GetMoviesJsonUdf.sql" />
@@ -146,8 +145,5 @@
     <Build Include="Types\VectorUdt.sql" />
     <Build Include="Stored Procedures\DeleteStarWarsTrilogy.sql" />
     <Build Include="Stored Procedures\DeleteMovie.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Deployment\rag-demo-3l.publish.xml" />
   </ItemGroup>
 </Project>

@@ -121,11 +121,10 @@
     <Folder Include="Properties" />
     <Folder Include="Stored Procedures" />
     <Folder Include="Tables" />
-    <Folder Include="Demos" />
-    <Folder Include="Demos\DiskANN Demo" />
-    <Folder Include="Demos\Hello World Demo" />
-    <Folder Include="Deployment" />
     <Folder Include="Functions" />
+    <Folder Include="Scripts" />
+    <Folder Include="Scripts\DiskANN Demo" />
+    <Folder Include="Scripts\Hello World Demo" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Genre.sql" />
@@ -146,28 +145,24 @@
     <Build Include="Stored Procedures\LoadMovies.sql" />
     <Build Include="Stored Procedures\RunVectorSearch.sql" />
     <Build Include="Stored Procedures\VectorizeMovies.sql" />
-    <None Include="Demos\DiskANN Demo\1. Create DiskANN Index.sql" />
-    <None Include="Demos\DiskANN Demo\2. Create ANN Search Stored Procedures.sql" />
-    <None Include="Demos\DiskANN Demo\3. Run ANN Vector Searches.sql" />
-    <None Include="Demos\DiskANN Demo\4. Cleanup.sql" />
-    <None Include="Demos\Hello World Demo\1. Create Database.sql" />
-    <None Include="Demos\Hello World Demo\2. Setup.sql" />
-    <None Include="Demos\Hello World Demo\3. Vectorize Data.sql" />
-    <None Include="Demos\Hello World Demo\4. Run Vector Searches.sql" />
-    <None Include="Demos\Hello World Demo\5. Cleanup.sql" />
-    <None Include="Demos\Hello World Demo\6. Drop Database.sql" />
-    <PreDeploy Include="Deployment\PreDeployment.sql" />
     <Build Include="Functions\GetMoviesJsonUdf.sql" />
     <Build Include="Tables\MovieVector.sql" />
-    <Build Include="Stored Procedures\EnableDisableCES.sql" />
+    <PreDeploy Include="Scripts\PreDeployment.sql" />
+    <None Include="Scripts\DiskANN Demo\1. Create DiskANN Index.sql" />
+    <None Include="Scripts\DiskANN Demo\2. Create ANN Search Stored Procedures.sql" />
+    <None Include="Scripts\DiskANN Demo\3. Run ANN Vector Searches.sql" />
+    <None Include="Scripts\DiskANN Demo\4. Cleanup.sql" />
+    <None Include="Scripts\Hello World Demo\1. Create Database.sql" />
+    <None Include="Scripts\Hello World Demo\2. Setup.sql" />
+    <None Include="Scripts\Hello World Demo\3. Vectorize Data.sql" />
+    <None Include="Scripts\Hello World Demo\4. Run Vector Searches.sql" />
+    <None Include="Scripts\Hello World Demo\5. Cleanup.sql" />
+    <None Include="Scripts\Hello World Demo\6. Drop Database.sql" />
   </ItemGroup>
   <ItemGroup>
-    <SqlCmdVariable Include="AzureOpenAIKey">
+    <SqlCmdVariable Include="OpenAIApiKey">
       <DefaultValue>&lt;secret&gt;</DefaultValue>
       <Value>$(SqlCmdVar__1)</Value>
     </SqlCmdVariable>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Deployment\rag-demo-3l.publish.xml" />
   </ItemGroup>
 </Project>
