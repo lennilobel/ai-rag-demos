@@ -1,4 +1,4 @@
-﻿using Rag.AIClient.Engine.RagProviders.Base;
+﻿using Rag.AIClient.Engine.RagProviders.Core;
 using Rag.AIClient.Engine.RagProviders.NoSql.CosmosDb;
 using Rag.AIClient.Engine.RagProviders.NoSql.MongoDb;
 using Rag.AIClient.Engine.RagProviders.Sql.AzureSql;

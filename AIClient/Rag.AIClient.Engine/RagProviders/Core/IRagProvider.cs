@@ -1,6 +1,6 @@
 ﻿using Rag.AIClient.Engine.Config;
 
-namespace Rag.AIClient.Engine.RagProviders.Base
+namespace Rag.AIClient.Engine.RagProviders.Core
 {
 	public interface IRagProvider
 	{

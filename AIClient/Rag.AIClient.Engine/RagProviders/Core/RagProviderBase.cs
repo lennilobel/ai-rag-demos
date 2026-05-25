@@ -4,7 +4,7 @@ using Rag.AIClient.Engine.AIModels;
 using System;
 using System.IO;
 
-namespace Rag.AIClient.Engine.RagProviders.Base
+namespace Rag.AIClient.Engine.RagProviders.Core
 {
 	public abstract class RagProviderBase : IRagProvider
 	{

@@ -1,4 +1,4 @@
-﻿using Rag.AIClient.Engine.RagProviders.Base;
+﻿using Rag.AIClient.Engine.RagProviders.Core;
 
 namespace Rag.AIClient.Engine.RagProviders.Sql.AzureSql
 {

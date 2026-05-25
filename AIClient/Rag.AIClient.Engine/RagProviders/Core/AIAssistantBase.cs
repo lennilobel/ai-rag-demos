@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rag.AIClient.Engine.RagProviders.Base
+namespace Rag.AIClient.Engine.RagProviders.Core
 {
 	public abstract class AIAssistantBase : RagBase, IAIAssistant
 	{

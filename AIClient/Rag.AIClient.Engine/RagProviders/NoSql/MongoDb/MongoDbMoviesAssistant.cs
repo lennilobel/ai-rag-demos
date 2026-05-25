@@ -2,7 +2,7 @@
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
 using Rag.AIClient.Engine.Config;
-using Rag.AIClient.Engine.RagProviders.Base;
+using Rag.AIClient.Engine.RagProviders.Core;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;

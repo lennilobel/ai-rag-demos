@@ -1,5 +1,5 @@
 ﻿using Rag.AIClient.Engine.Config;
-using Rag.AIClient.Engine.RagProviders.Base;
+using Rag.AIClient.Engine.RagProviders.Core;
 using Rag.AIClient.Engine.RagProviders.NoSql.CosmosDb;
 
 namespace Rag.AIClient.Engine.Custom

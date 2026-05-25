@@ -1,5 +1,5 @@
 ﻿using Rag.AIClient.Engine.Config;
-using Rag.AIClient.Engine.RagProviders.Base;
+using Rag.AIClient.Engine.RagProviders.Core;
 using Rag.AIClient.Engine.RagProviders.Sql.SqlServer;
 
 namespace Rag.AIClient.Engine.RagProviders.Sql.SqlServer2025

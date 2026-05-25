@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Rag.AIClient.Engine.RagProviders.Base
+namespace Rag.AIClient.Engine.RagProviders.Core
 {
 	public interface IDataVectorizer
 	{

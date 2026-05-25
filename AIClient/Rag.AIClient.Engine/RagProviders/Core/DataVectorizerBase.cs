@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Rag.AIClient.Engine.RagProviders.Base
+namespace Rag.AIClient.Engine.RagProviders.Core
 {
 	public abstract class DataVectorizerBase : RagBase, IDataVectorizer
 	{

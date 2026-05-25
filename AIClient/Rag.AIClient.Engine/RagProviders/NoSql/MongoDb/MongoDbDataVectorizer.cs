@@ -2,7 +2,7 @@
 using MongoDB.Driver;
 using OpenAI.Embeddings;
 using Rag.AIClient.Engine.AIModels;
-using Rag.AIClient.Engine.RagProviders.Base;
+using Rag.AIClient.Engine.RagProviders.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
