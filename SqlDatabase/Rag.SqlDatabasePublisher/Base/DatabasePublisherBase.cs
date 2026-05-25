@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Rag.SqlDatabasePublisher
+namespace Rag.SqlDatabasePublisher.Base
 {
-	public class DatabasePublisher
+	public abstract class DatabasePublisherBase : IDatabasePublisher
 	{
 		public string SqlProjectFile => Path.GetFullPath(@"..\..\..\..\..\SqlDatabase\Rag.MoviesDatabase.AzureSql\Rag.MoviesDatabase.AzureSql.sqlproj");
 

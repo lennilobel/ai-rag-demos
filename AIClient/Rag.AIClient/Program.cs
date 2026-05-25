@@ -4,7 +4,7 @@ using Rag.AIClient.Engine;
 using Rag.AIClient.Engine.AIModels;
 using Rag.AIClient.Engine.Config;
 using Rag.AIClient.Engine.RagProviders;
-using Rag.SqlDatabasePublisher;
+using Rag.SqlDatabasePublisher.Base;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -82,8 +82,7 @@ namespace Rag.AIClient
 
 		private static void ShowMenu()
 		{
-			var provider = RagProviderFactory.GetRagProvider();
-			var publishDatabaseMenuText = provider.UsesDatabasePublisher ? "• PD - Publish Database" : null;
+			var publishDatabaseMenuText = (TryGetDatabasePublisher() != null) ? "• PD - Publish Database" : null;
 
 			Console.OutputEncoding = Encoding.UTF8;
 			ConsoleHelper.Clear();
@@ -110,6 +109,18 @@ namespace Rag.AIClient
 			Console.WriteLine($" • Q  - Quit");
 			Console.WriteLine();
 			ConsoleHelper.ResetColor();
+		}
+
+		private static IDatabasePublisher TryGetDatabasePublisher()
+		{
+			try
+			{
+				return DatabasePublisherFactory.GetDatabasePublisher(RagProviderFactory.RagProviderType);
+			}
+			catch (NotSupportedException)
+			{
+				return null;
+			}
 		}
 
 		private static async Task RunAction(Func<Task> actionMethod)
@@ -338,7 +349,9 @@ namespace Rag.AIClient
 
 		private static async Task PublishDatabase()
 		{
-			var publisher = new DatabasePublisher();
+			var publisher = TryGetDatabasePublisher()
+				?? throw new NotSupportedException("The current RAG provider has no database publisher");
+
 			await publisher.Publish();
 		}
 

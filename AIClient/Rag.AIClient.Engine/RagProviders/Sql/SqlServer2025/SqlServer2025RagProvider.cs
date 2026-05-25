@@ -12,8 +12,6 @@ namespace Rag.AIClient.Engine.RagProviders.Sql.SqlServer2025
 
 		public override bool UsesDatabaseConfiguration => true;
 
-		public override bool UsesDatabasePublisher => true;
-
 		public override string EntityTitleFieldName => "Title";
 
         public override IDataPopulator GetDataPopulator() => new SqlServer2025DataPopulator(this);
