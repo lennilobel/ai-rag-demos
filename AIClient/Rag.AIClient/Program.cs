@@ -4,7 +4,6 @@ using Rag.AIClient.Engine;
 using Rag.AIClient.Engine.AIModels;
 using Rag.AIClient.Engine.Config;
 using Rag.AIClient.Engine.RagProviders;
-using Rag.AIClient.Engine.RagProviders.Sql;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -76,6 +75,7 @@ namespace Rag.AIClient
 				{ "UC", UpdateConfiguration },
 				{ "AC", ViewAppConfig },
 				{ "IV", InitializeAndVectorize },
+				{ "PD", PublishDatabase },
 			};
 		}
 
@@ -103,7 +103,7 @@ namespace Rag.AIClient
 			Console.WriteLine($" • VD - Vectorize data         • CMS  - Change AI models source");
 			Console.WriteLine($" • UD - Update data            • CEM  - Change Azure OpenAI embedding model");
 			Console.WriteLine($" • RD - Reset data             • UC   - Update configuration");
-			Console.WriteLine($" • HW - Hello RAG World demo");
+			Console.WriteLine($" • HW - Hello RAG World demo   • PD   - Publish database");
 			Console.WriteLine($" • AI - AI Assistant demo");
 			Console.WriteLine($" • Q  - Quit");
 			Console.WriteLine();
@@ -332,6 +332,12 @@ namespace Rag.AIClient
 				.Get<AppConfig>();
 
 			return appConfig;
+		}
+
+		private static async Task PublishDatabase()
+		{
+			var publisher = new DatabasePublisher();
+			await publisher.Publish();
 		}
 
 	}

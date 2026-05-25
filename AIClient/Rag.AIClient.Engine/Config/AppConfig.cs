@@ -79,6 +79,13 @@ namespace Rag.AIClient.Engine.Config
 			public string DalleDeploymentName { get; set; }
 		}
 
+		public ChangeEventStreamingConfig ChangeEventStreaming { get; set; }
+		public class ChangeEventStreamingConfig
+		{
+			public string CesSasToken { get; set; }
+			public string StorageSasToken { get; set; }
+		}
+
 		public LocalAIConfig LocalAI { get; set; }
 		public class LocalAIConfig
 		{
