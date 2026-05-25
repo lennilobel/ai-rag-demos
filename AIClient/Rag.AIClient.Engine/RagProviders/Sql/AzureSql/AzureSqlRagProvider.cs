@@ -13,6 +13,8 @@ namespace Rag.AIClient.Engine.RagProviders.Sql.AzureSql
 
 		public override bool UsesDatabaseConfiguration => true;
 
+		public override bool UsesDatabasePublisher => true;
+		
         public override string GetDataFilePath(string filename) => filename;
 
         public override IDataPopulator GetDataPopulator() => new AzureSqlDataPopulator(this);

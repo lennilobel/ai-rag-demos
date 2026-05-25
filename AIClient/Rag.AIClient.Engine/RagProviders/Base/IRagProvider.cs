@@ -13,6 +13,7 @@ namespace Rag.AIClient.Engine.RagProviders.Base
 		string SqlConnectionString { get; }
 		bool UsesChangeEventStreaming { get; }
 		bool UsesDatabaseConfiguration { get; }
+		bool UsesDatabasePublisher { get; }
 		string EntityTitleFieldName { get; }
 
 		string GetDataFilePath(string filename);

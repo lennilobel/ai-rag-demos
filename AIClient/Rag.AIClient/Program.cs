@@ -83,6 +83,7 @@ namespace Rag.AIClient
 		private static void ShowMenu()
 		{
 			var provider = RagProviderFactory.GetRagProvider();
+			var publishDatabaseMenuText = provider.UsesDatabasePublisher ? "• PD - Publish Database" : null;
 
 			Console.OutputEncoding = Encoding.UTF8;
 			ConsoleHelper.Clear();
@@ -104,7 +105,7 @@ namespace Rag.AIClient
 			Console.WriteLine($" • VD - Vectorize data         • CMS  - Change AI models source");
 			Console.WriteLine($" • UD - Update data            • CEM  - Change Azure OpenAI embedding model");
 			Console.WriteLine($" • RD - Reset data             • UC   - Update configuration");
-			Console.WriteLine($" • HW - Hello RAG World demo   • PD   - Publish database");
+			Console.WriteLine($" • HW - Hello RAG World demo   {publishDatabaseMenuText}");
 			Console.WriteLine($" • AI - AI Assistant demo");
 			Console.WriteLine($" • Q  - Quit");
 			Console.WriteLine();
@@ -310,7 +311,7 @@ namespace Rag.AIClient
 		//	System.IO.File.WriteAllText(filePath, updatedContent);
 		//}
 
-		public static AppConfig LoadConfiguration(bool includeUserSecrets)
+		private static AppConfig LoadConfiguration(bool includeUserSecrets)
 		{
 			/*
 				%APPDATA%\Microsoft\UserSecrets\
@@ -337,9 +338,8 @@ namespace Rag.AIClient
 
 		private static async Task PublishDatabase()
 		{
-			var appConfig = LoadConfiguration(includeUserSecrets: true);
 			var publisher = new DatabasePublisher();
-			await publisher.Publish(appConfig);
+			await publisher.Publish();
 		}
 
 	}

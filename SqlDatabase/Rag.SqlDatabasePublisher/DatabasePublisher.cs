@@ -1,5 +1,5 @@
 ﻿using Microsoft.SqlServer.Dac;
-using Rag.AIClient.Engine.Config;
+using Rag.AIClient.Engine;
 using Rag.AIClient.Engine.RagProviders.Sql.AzureSql;
 using System;
 using System.Diagnostics;
@@ -12,8 +12,9 @@ namespace Rag.SqlDatabasePublisher
 	{
 		public string SqlProjectFile => Path.GetFullPath(@"..\..\..\..\..\SqlDatabase\Rag.MoviesDatabase.AzureSql\Rag.MoviesDatabase.AzureSql.sqlproj");
 
-		public async Task Publish(AppConfig appConfig)
+		public async Task Publish()
 		{
+			var appConfig = Shared.AppConfig;
 			var ragProvider = new AzureSqlRagProvider();
 			var dacpacPath = this.BuildDatabaseProject();
 			var publishOptions = new PublishOptions
