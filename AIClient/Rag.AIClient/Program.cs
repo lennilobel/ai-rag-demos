@@ -4,7 +4,7 @@ using Rag.AIClient.Engine;
 using Rag.AIClient.Engine.AIModels;
 using Rag.AIClient.Engine.Config;
 using Rag.AIClient.Engine.RagProviders;
-using Rag.SqlDatabasePublisher.Base;
+using Rag.SqlDatabasePublisher.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -82,7 +82,7 @@ namespace Rag.AIClient
 
 		private static void ShowMenu()
 		{
-			var publishDatabaseMenuText = (TryGetDatabasePublisher() != null) ? "• PD - Publish Database" : null;
+			var publishDatabaseMenuText = (TryGetDatabasePublisher() != null) ? "• PD   - Publish Database" : null;
 
 			Console.OutputEncoding = Encoding.UTF8;
 			ConsoleHelper.Clear();
@@ -109,18 +109,6 @@ namespace Rag.AIClient
 			Console.WriteLine($" • Q  - Quit");
 			Console.WriteLine();
 			ConsoleHelper.ResetColor();
-		}
-
-		private static IDatabasePublisher TryGetDatabasePublisher()
-		{
-			try
-			{
-				return DatabasePublisherFactory.GetDatabasePublisher(RagProviderFactory.RagProviderType);
-			}
-			catch (NotSupportedException)
-			{
-				return null;
-			}
 		}
 
 		private static async Task RunAction(Func<Task> actionMethod)
@@ -352,8 +340,44 @@ namespace Rag.AIClient
 			var publisher = TryGetDatabasePublisher()
 				?? throw new NotSupportedException("The current RAG provider has no database publisher");
 
-			await publisher.Publish();
+			var ragProvider = RagProviderFactory.GetRagProvider();
+
+			var config = new DatabasePublisherConfig
+			{
+				DatabasePublisherType = GetDatabasePublisherType(),
+				DatabaseName = ragProvider.DatabaseName,
+				SqlConnectionString = ragProvider.SqlConnectionString,
+				SqlCommandVariables = new Dictionary<string, string>
+				{
+					{ "OpenAIApiKey", Shared.AppConfig.AzureOpenAI.ApiKey },
+					{ "CesSasToken", Shared.AppConfig.ChangeEventStreaming.CesSasToken },
+					{ "StorageSasToken", Shared.AppConfig.ChangeEventStreaming.StorageSasToken },
+				}
+			};
+
+			await publisher.Publish(config);
 		}
+
+		private static IDatabasePublisher TryGetDatabasePublisher()
+		{
+			try
+			{
+				return DatabasePublisherFactory.GetDatabasePublisher(GetDatabasePublisherType());
+			}
+			catch (NotSupportedException)
+			{
+				return null;
+			}
+		}
+
+		private static DatabasePublisherType GetDatabasePublisherType() =>
+			RagProviderFactory.RagProviderType switch
+			{
+				RagProviderType.SqlServer2022 => DatabasePublisherType.SqlServer2025,
+				RagProviderType.AzureSql => DatabasePublisherType.AzureSql,
+				_ => throw new NotSupportedException($"There is no database publisher type for RAG provider type {RagProviderFactory.RagProviderType}"),
+			};
+
 
 	}
 }

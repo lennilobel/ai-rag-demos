@@ -1,4 +1,4 @@
-﻿using Rag.SqlDatabasePublisher.Base;
+﻿using Rag.SqlDatabasePublisher.Core;
 
 namespace Rag.SqlDatabasePublisher
 {

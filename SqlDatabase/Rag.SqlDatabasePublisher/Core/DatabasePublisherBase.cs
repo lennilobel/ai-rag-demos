@@ -1,21 +1,19 @@
 ﻿using Microsoft.SqlServer.Dac;
-using Rag.AIClient.Engine;
-using Rag.AIClient.Engine.RagProviders.Sql.AzureSql;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Rag.SqlDatabasePublisher.Base
+namespace Rag.SqlDatabasePublisher.Core
 {
 	public abstract class DatabasePublisherBase : IDatabasePublisher
 	{
 		public string SqlProjectFile => Path.GetFullPath(@"..\..\..\..\..\SqlDatabase\Rag.MoviesDatabase.AzureSql\Rag.MoviesDatabase.AzureSql.sqlproj");
 
-		public async Task Publish()
+		public async Task Publish(DatabasePublisherConfig config)
 		{
-			var appConfig = Shared.AppConfig;
-			var ragProvider = new AzureSqlRagProvider();
+			Debugger.Break();
+
 			var dacpacPath = this.BuildDatabaseProject();
 			var publishOptions = new PublishOptions
 			{
@@ -26,10 +24,10 @@ namespace Rag.SqlDatabasePublisher.Base
 				GenerateDeploymentReport = true
 			};
 
-			publishOptions.DeployOptions.SqlCommandVariableValues["CesSasToken"] = appConfig.ChangeEventStreaming.CesSasToken;
-			publishOptions.DeployOptions.SqlCommandVariableValues["StorageSasToken"] = appConfig.ChangeEventStreaming.StorageSasToken;
+			publishOptions.DeployOptions.SqlCommandVariableValues["CesSasToken"] = config.SqlCommandVariables["CesSasToken"];
+			publishOptions.DeployOptions.SqlCommandVariableValues["StorageSasToken"] = config.SqlCommandVariables["StorageSasToken"];
 
-			var dacServices = new DacServices(ragProvider.SqlConnectionString);
+			var dacServices = new DacServices(config.SqlConnectionString);
 
 			dacServices.Message += (_, e) =>
 			{
@@ -38,7 +36,7 @@ namespace Rag.SqlDatabasePublisher.Base
 
 			using var dacpac = DacPackage.Load(dacpacPath);
 
-			dacServices.Publish(dacpac, ragProvider.DatabaseName, publishOptions);
+			dacServices.Publish(dacpac, config.DatabaseName, publishOptions);
 
 			Console.WriteLine("Publish complete.");
 		}
