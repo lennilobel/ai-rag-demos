@@ -375,14 +375,14 @@ namespace Rag.AIClient
 		private static DatabasePublisherType GetDatabasePublisherType()
 		{
 			// Get DatabasePublisherType enum value from the current RagProviderType enum value by matching names
-			var ragProviderType = RagProviderFactory.RagProviderType;
+			var typeName = RagProviderFactory.RagProviderType.ToString();
 
-			if (Enum.IsDefined(typeof(DatabasePublisherType), ragProviderType.ToString()))
+			if (Enum.IsDefined(typeof(DatabasePublisherType), typeName))
 			{
-				return Enum.Parse<DatabasePublisherType>(ragProviderType.ToString());
+				return Enum.Parse<DatabasePublisherType>(typeName);
 			}
 
-			throw new NotSupportedException($"There is no database publisher type for RAG provider type {ragProviderType}");
+			throw new NotSupportedException($"There is no database publisher type for RAG provider type {typeName}");
 		}
 
 	}
