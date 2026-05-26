@@ -1,5 +1,4 @@
-﻿using Rag.AIClient.Engine.RagProviders.Core;
-using Rag.AIClient.Engine.RagProviders.NoSql.CosmosDb;
+﻿using Rag.AIClient.Engine.RagProviders.NoSql.CosmosDb;
 using Rag.AIClient.Engine.RagProviders.NoSql.MongoDb;
 using Rag.AIClient.Engine.RagProviders.Sql.AzureSql;
 using Rag.AIClient.Engine.RagProviders.Sql.SqlServer;
@@ -8,7 +7,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Rag.AIClient.Engine.RagProviders
+namespace Rag.AIClient.Engine.RagProviders.Core
 {
 	public static class RagProviderFactory
 	{
@@ -28,22 +27,33 @@ namespace Rag.AIClient.Engine.RagProviders
 				: Shared.AppConfig.ExternalRagProviderType;
 		}
 
-		public static IRagProvider GetRagProvider() =>
-			RagProviderType switch
+		public static IRagProvider GetRagProvider()
+		{
+			if (RagProviderType == RagProviderType.External)
 			{
-				RagProviderType.SqlServer2022 => new SqlServer2022RagProvider(),
-				RagProviderType.SqlServer2025 => new SqlServer2025RagProvider(),
-				RagProviderType.AzureSql => new AzureSqlRagProvider(),
-				RagProviderType.CosmosDb => new CosmosDbRagProvider(),
-				RagProviderType.MongoDb => new MongoDbRagProvider(),
-				RagProviderType.External => GetExternalRagProvider(),
-				_ => throw new NotSupportedException($"No provider is implemented for RAG provider type {RagProviderType}"),
-			};
+				return GetExternalRagProvider();
+			}
+
+			var expectedTypeName = $"{RagProviderType}RagProvider";
+
+			var providerType = AppDomain.CurrentDomain
+				.GetAssemblies()
+				.SelectMany(a => a.GetTypes())
+				.SingleOrDefault(t =>
+					typeof(IRagProvider).IsAssignableFrom(t) &&
+					!t.IsAbstract &&
+					string.Equals(t.Name, expectedTypeName, StringComparison.Ordinal))
+				?? throw new NotSupportedException($"No provider is implemented for RAG provider type {RagProviderType}");
+			
+			var ragProvider = (IRagProvider)Activator.CreateInstance(providerType);
+
+			return ragProvider;
+		}
 
 		private static IRagProvider GetExternalRagProvider()
 		{
 			var externalRagProvider = Shared.AppConfig.ExternalRagProviders.FirstOrDefault(erp => string.Equals(erp.ExternalRagProviderType, ExternalRagProviderType, StringComparison.OrdinalIgnoreCase))
-					?? throw new NotSupportedException($"No external provider exists for external RAG provider type {ExternalRagProviderType}");
+				?? throw new NotSupportedException($"No external provider exists for external RAG provider type {ExternalRagProviderType}");
 
 			var assemblyPath = externalRagProvider.ExternalRagProviderAssemblyPath;
 			var assembly = Assembly.LoadFrom(assemblyPath);

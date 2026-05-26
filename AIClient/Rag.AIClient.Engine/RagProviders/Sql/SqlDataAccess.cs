@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Rag.AIClient.Engine.RagProviders.Core;
 using System;
 using System.Data;
 using System.Threading.Tasks;

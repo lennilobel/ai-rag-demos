@@ -1,5 +1,5 @@
 ﻿using Rag.AIClient.Engine.AIModels;
-using Rag.AIClient.Engine.RagProviders;
+using Rag.AIClient.Engine.RagProviders.Core;
 using System;
 using System.Drawing;
 

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Rag.AIClient.Engine;
 using Rag.AIClient.Engine.AIModels;
 using Rag.AIClient.Engine.Config;
-using Rag.AIClient.Engine.RagProviders;
+using Rag.AIClient.Engine.RagProviders.Core;
 using Rag.SqlDatabasePublisher.Core;
 using System;
 using System.Collections.Generic;

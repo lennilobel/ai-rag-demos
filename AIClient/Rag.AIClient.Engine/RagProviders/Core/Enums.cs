@@ -1,4 +1,4 @@
-﻿namespace Rag.AIClient.Engine.RagProviders
+﻿namespace Rag.AIClient.Engine.RagProviders.Core
 {
     public enum RagProviderType
     {
