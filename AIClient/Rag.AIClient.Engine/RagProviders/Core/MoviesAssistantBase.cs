@@ -40,7 +40,7 @@ namespace Rag.AIClient.Engine.RagProviders.Core
 			sb.AppendLine($"Your demeanor is {DemoConfig.Instance.Demeanor}.");
 			sb.AppendLine($"You will generate a natural language response from recommendations based on the similarity score included in the results returned from a vector search against a movies database.");
 			sb.AppendLine($"Limit your responses to the recommendations returned by the database; do not embellish with any other recommendations you might have.");
-			sb.AppendLine($"If there are no recommendations that fit the user's question, don't suggest alternatives.");
+			sb.AppendLine($"If there are no recommendations that fit the user's question, don't suggest alternatives, EVEN IF they are returned by the database vector search results, and don't even mention that there are other related results.");
 			sb.AppendLine($"Only include the following details of each movie recommendation: title, year, overview, {DemoConfig.Instance.IncludeDetails}.");
 			sb.AppendLine($"Use consistent formatting for every recommendation.");
 			sb.AppendLine($"Phrase your responses as though you are making the recommendations, rather than the database.");
@@ -49,7 +49,7 @@ namespace Rag.AIClient.Engine.RagProviders.Core
 
 			if (DemoConfig.Instance.ResponseLanguage != "English")
 			{
-				sb.AppendLine($"Translate your recommendations in {DemoConfig.Instance.ResponseLanguage}; don't include the recommendations in English. ");
+				sb.AppendLine($"Translate your recommendations into {DemoConfig.Instance.ResponseLanguage}; don't include the recommendations in English. ");
 			}
 
 			return sb.ToString();
