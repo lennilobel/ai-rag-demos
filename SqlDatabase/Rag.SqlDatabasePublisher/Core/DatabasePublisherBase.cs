@@ -16,37 +16,7 @@ namespace Rag.SqlDatabasePublisher.Core
 
 			var dacpacFile = this.BuildDatabaseProject();
 
-			Console.WriteLine($"Deploying {dacpacFile}");
-
-			var publishOptions = new PublishOptions
-			{
-				DeployOptions = new()
-				{
-					BlockOnPossibleDataLoss = false
-				},
-				GenerateDeploymentReport = true
-			};
-
-			this.SetPublishOptions(publishOptions, config);
-
-			var dacServices = new DacServices(config.SqlConnectionString);
-
-			dacServices.Message += (_, e) =>
-			{
-				Console.WriteLine(e.Message.Message);
-			};
-
-			using var dacpac = DacPackage.Load(dacpacFile);
-
-			dacServices.Publish(dacpac, config.DatabaseName, publishOptions);
-
-			Console.WriteLine("Deployment succeeded");
-			Console.WriteLine();
-		}
-
-		protected virtual void SetPublishOptions(PublishOptions publishOptions, DatabasePublisherConfig config)
-		{
-			// Subclasses can override this method to customize publish options (e.g., SQLCMD variable values) based on the config
+			this.DeployDacpacFile(dacpacFile, config);
 		}
 
 		private string BuildDatabaseProject()
@@ -137,6 +107,41 @@ STDERR:
 			}
 
 			return output.Split(Environment.NewLine)[0];
+		}
+
+		private void DeployDacpacFile(string dacpacFile, DatabasePublisherConfig config)
+		{
+			Console.WriteLine($"Deploying {dacpacFile}");
+
+			var publishOptions = new PublishOptions
+			{
+				DeployOptions = new()
+				{
+					BlockOnPossibleDataLoss = false
+				},
+				GenerateDeploymentReport = true
+			};
+
+			this.SetPublishOptions(publishOptions, config);
+
+			var dacServices = new DacServices(config.SqlConnectionString);
+
+			dacServices.Message += (_, e) =>
+			{
+				Console.WriteLine(e.Message.Message);
+			};
+
+			using var dacpac = DacPackage.Load(dacpacFile);
+
+			dacServices.Publish(dacpac, config.DatabaseName, publishOptions);
+
+			Console.WriteLine("Deployment succeeded");
+			Console.WriteLine();
+		}
+
+		protected virtual void SetPublishOptions(PublishOptions publishOptions, DatabasePublisherConfig config)
+		{
+			// Subclasses can override this method to customize publish options (e.g., set SQLCMD variable values) based on the config
 		}
 
 	}
