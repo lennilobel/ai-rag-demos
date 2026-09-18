@@ -1,5 +1,5 @@
 ﻿CREATE FUNCTION GetMoviesJsonUdf(@MovieIdsCsv varchar(max))
-RETURNS varchar(max)
+RETURNS json
 AS
 BEGIN
 
@@ -10,7 +10,7 @@ BEGIN
 
     DECLARE @MovieCount int = @@ROWCOUNT
 
-    DECLARE @MoviesJson varchar(max) = (
+    DECLARE @MoviesJson json = CONVERT(json, (
         SELECT
             m.MovieId,
             m.Title,
@@ -77,10 +77,10 @@ BEGIN
         ORDER BY
             Title
         FOR JSON PATH
-    )
+    ))
 
     IF @MovieCount = 1
-        SET @MoviesJson = SUBSTRING(@MoviesJson, 2, LEN(@MoviesJson) - 2)
+        SET @MoviesJson = CONVERT(json, JSON_QUERY(@MoviesJson, '$[0]'))
 
     RETURN @MoviesJson
 

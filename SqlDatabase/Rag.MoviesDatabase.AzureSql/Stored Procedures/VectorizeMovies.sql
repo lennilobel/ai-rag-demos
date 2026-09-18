@@ -6,11 +6,11 @@ BEGIN
     SET NOCOUNT ON
 
     -- The UDF returns either a single JSON object (for a single movie) or a JSON array (for multiple movies).
-    DECLARE @MoviesJson varchar(max) = dbo.GetMoviesJsonUdf(@MovieIdsCsv)
+    DECLARE @MoviesJson json = dbo.GetMoviesJsonUdf(@MovieIdsCsv)
 
     -- If a single movie is returned, wrap it as a single-element array.
-    IF LEFT(@MoviesJson, 1) = '{'
-        SET @MoviesJson = CONCAT('[', @MoviesJson, ']')
+    IF JSON_PATH_EXISTS(@MoviesJson, '$.MovieId') = 1
+        SET @MoviesJson = JSON_ARRAY(@MoviesJson RETURNING json)
 
     -- Track processing state and batch progress.
     DECLARE @ErrorCount int = 0
@@ -19,47 +19,73 @@ BEGIN
     DECLARE @TotalCount int = (SELECT COUNT(*) FROM OPENJSON(@MoviesJson))
     DECLARE @Message varchar(max)
 
-    -- Process the movies in batches
-    WHILE @CurrentPosition < @TotalCount BEGIN
+    -- Process the movies in batches.
+    WHILE @CurrentPosition < @TotalCount
+    BEGIN
 
         BEGIN TRY
 
-            DECLARE @MoviesBatchJson nvarchar(max)
+            DECLARE @MoviesBatchJson json
 
-            -- Retrieve the next batch of movie JSON objects (movies are sorted alphabetically by title for predictable processing order).
+            -- Retrieve the next batch of movie JSON objects
+            -- and rebuild them as a native JSON array.
             ;WITH BatchCte AS (
                 SELECT
                     [key],
                     value
                 FROM
                     OPENJSON(@MoviesJson)
-                ORDER BY JSON_VALUE(value, '$.Title')
-                OFFSET @CurrentPosition ROWS FETCH NEXT @BatchSize ROWS ONLY
+                ORDER BY
+                    JSON_VALUE(value, '$.Title')
+                OFFSET @CurrentPosition ROWS
+                FETCH NEXT @BatchSize ROWS ONLY
             )
-            -- Rebuild the selected batch as a JSON array (preserve the original JSON array ordering so embedding indexes align correctly).
-            SELECT @MoviesBatchJson =
-                CONCAT(
-                    '[',
-                    STRING_AGG(CONVERT(varchar(max), value), ',') WITHIN GROUP (ORDER BY CONVERT(int, [key])),
-                    ']'
-                )
-            FROM BatchCte
+            SELECT
+                @MoviesBatchJson =
+                    JSON_ARRAYAGG(
+                        CONVERT(json, value)
+                        ORDER BY CONVERT(int, [key])
+                        RETURNING json
+                    )
+            FROM
+                BatchCte
 
             -- Emit informational progress messages for each movie in the batch.
-            DECLARE @MovieJson varchar(max)
-            DECLARE curMovies CURSOR LOCAL FAST_FORWARD FOR SELECT value FROM OPENJSON(@MoviesBatchJson) ORDER BY CONVERT(int, [key])
+            DECLARE @MovieJson json
+
+            DECLARE curMovies CURSOR LOCAL FAST_FORWARD FOR
+                SELECT
+                    CONVERT(json, value)
+                FROM
+                    OPENJSON(@MoviesBatchJson)
+                ORDER BY
+                    CONVERT(int, [key])
+
             OPEN curMovies
             FETCH NEXT FROM curMovies INTO @MovieJson
+
             WHILE @@FETCH_STATUS = 0
             BEGIN
-                SET @Message = CONCAT('Vectorizing entity - ', JSON_VALUE(@MovieJson, '$.Title'), ' (ID ', JSON_VALUE(@MovieJson, '$.MovieId'), ')')
+
+                SET @Message =
+                    CONCAT(
+                        'Vectorizing entity - ',
+                        JSON_VALUE(@MovieJson, '$.Title'),
+                        ' (ID ',
+                        JSON_VALUE(@MovieJson, '$.MovieId'),
+                        ')'
+                    )
+
                 RAISERROR(@Message, 0, 1) WITH NOWAIT
+
                 FETCH NEXT FROM curMovies INTO @MovieJson
+
             END
+
             CLOSE curMovies
             DEALLOCATE curMovies
 
-            -- Vectorize the batch
+            -- Vectorize the batch.
             EXEC VectorizeMoviesBatch @MoviesBatchJson
 
         END TRY

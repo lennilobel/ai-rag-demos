@@ -10,10 +10,10 @@ BEGIN
         SELECT CONVERT(int, value) AS MovieId
         FROM STRING_SPLIT(@MovieIdsCsv, ',')
 
-	DECLARE @MoviesJson varchar(max) = dbo.GetMoviesJsonUdf(@MovieIdsCsv)
+	DECLARE @MoviesJson json = dbo.GetMoviesJsonUdf(@MovieIdsCsv)
 
-	IF LEFT(@MoviesJson, 1) = '{'
-		SET @MoviesJson = CONCAT('[', @MoviesJson, ']')
+	IF LEFT(CONVERT(nvarchar(max), @MoviesJson), 1) = '{'
+		SET @MoviesJson = CONVERT(json, CONCAT('[', CONVERT(nvarchar(max), @MoviesJson), ']'))
 
 	DECLARE @MovieJson varchar(max)
 	DECLARE @ErrorCount int = 0

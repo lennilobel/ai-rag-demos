@@ -12,6 +12,12 @@ namespace Rag.SqlDatabasePublisher
 		{
 			publishOptions.DeployOptions.SqlCommandVariableValues["CesSasToken"] = config.SqlCommandVariables["CesSasToken"];
 			publishOptions.DeployOptions.SqlCommandVariableValues["StorageSasToken"] = config.SqlCommandVariables["StorageSasToken"];
+
+			publishOptions.DeployOptions.DatabaseSpecification = new DacAzureDatabaseSpecification
+			{
+				Edition = DacAzureEdition.GeneralPurpose,
+				ServiceObjective = "GP_S_Gen5_1"
+			};
 		}
 	}
 }

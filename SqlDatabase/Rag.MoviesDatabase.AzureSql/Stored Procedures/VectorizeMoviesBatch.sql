@@ -1,26 +1,29 @@
 ﻿CREATE PROCEDURE VectorizeMoviesBatch
-    @MoviesBatchJson varchar(max)
+    @MoviesBatchJson json
 AS
 BEGIN
 
     -- Build the JSON payload expected by the Azure OpenAI embeddings endpoint.
     -- The "input" property must contain a JSON array of strings.
-    DECLARE @MoviesPayload varchar(max)
+    DECLARE @MoviesPayloadJson json
 
-    -- Convert the batch of movie JSON objects into an array of escaped strings.
+    -- Convert the batch of movie JSON objects into an array of JSON strings.
     -- Preserve the original array ordering so the returned embedding indexes align with the source movies.
     -- Explicitly request 1536 dimensions so the result fits into SQL Server's vector(1536) data type.
-    SELECT @MoviesPayload =
-        JSON_OBJECT(
-            'input': JSON_QUERY(
-                '[' + STRING_AGG(
-                    '"' + STRING_ESCAPE(CONVERT(varchar(max), value), 'json') + '"',
-                    ','
-                ) WITHIN GROUP (ORDER BY CONVERT(int, [key])) + ']'
-            ),
-            'dimensions': 1536
-        )
-    FROM OPENJSON(@MoviesBatchJson)
+    SELECT
+        @MoviesPayloadJson =
+            JSON_OBJECT(
+                'input':
+                    JSON_ARRAYAGG(
+                        value
+                        ORDER BY CONVERT(int, [key])
+                        RETURNING json
+                    ),
+                'dimensions': 1536
+                RETURNING json
+            )
+    FROM
+        OPENJSON(@MoviesBatchJson)
 
     -- Retrieve Azure OpenAI configuration values from the application configuration table.
     DECLARE @OpenAIEndpoint varchar(max)        = (SELECT ConfigValue FROM AppConfig WHERE ConfigKey = 'OpenAIEndpoint')
@@ -28,22 +31,45 @@ BEGIN
     DECLARE @OpenAIDeploymentName varchar(max)  = (SELECT ConfigValue FROM AppConfig WHERE ConfigKey = 'OpenAIDeploymentName')
 
     -- Build the embeddings endpoint URL and request headers.
-    DECLARE @Url varchar(max) = CONCAT(@OpenAIEndpoint, 'openai/deployments/', @OpenAIDeploymentName, '/embeddings?api-version=2023-03-15-preview')
-    DECLARE @Headers varchar(max) = JSON_OBJECT('api-key': @OpenAIApiKey)
-    DECLARE @Response nvarchar(max)
+    DECLARE @Url varchar(max) =
+        CONCAT(
+            @OpenAIEndpoint,
+            'openai/deployments/',
+            @OpenAIDeploymentName,
+            '/embeddings?api-version=2023-03-15-preview'
+        )
+
+    DECLARE @HeadersJson json =
+        JSON_OBJECT(
+            'api-key': @OpenAIApiKey
+            RETURNING json
+        )
+
+    -- sp_invoke_external_rest_endpoint requires text parameters,
+    -- so convert from native JSON only at the REST boundary.
+    DECLARE @MoviesPayloadText nvarchar(max) =
+        CONVERT(nvarchar(max), @MoviesPayloadJson)
+
+    DECLARE @HeadersText nvarchar(4000) =
+        CONVERT(nvarchar(4000), @HeadersJson)
+
+    DECLARE @ResponseText nvarchar(max)
     DECLARE @ReturnValue int
 
     -- Invoke the Azure OpenAI REST API to generate embeddings for the movie batch.
     EXEC @ReturnValue = sp_invoke_external_rest_endpoint
         @url = @Url,
         @method = 'POST',
-        @headers = @Headers,
-        @payload = @MoviesPayload,
-        @response = @Response OUTPUT
+        @headers = @HeadersText,
+        @payload = @MoviesPayloadText,
+        @response = @ResponseText OUTPUT
 
     -- If the REST call failed, throw the returned response payload as the error message.
     IF @ReturnValue != 0
-        THROW 50000, @Response, 1
+        THROW 50000, @ResponseText, 1
+
+    -- Convert the successful REST response into native JSON immediately.
+    DECLARE @ResponseJson json = CONVERT(json, @ResponseText)
 
     -- Extract MovieId values from the source batch and assign a zero-based index.
     -- The index must match the embedding index returned by the Azure OpenAI response.
@@ -60,10 +86,10 @@ BEGIN
             MovieIndex,
             Vector = CAST(Embedding AS vector(1536))
         FROM
-            OPENJSON(@Response, '$.result.data')                    -- each movie is an element in the result's data array
+            OPENJSON(@ResponseJson, '$.result.data')
         WITH (
             MovieIndex int '$.index',
-            Embedding nvarchar(max) '$.embedding' AS JSON           -- each movie's vector is retrieved from the embedding array in the data array of each result
+            Embedding nvarchar(max) '$.embedding' AS JSON
         )
     ),
     -- Join the source movies to the returned embeddings using the shared positional index.
@@ -73,7 +99,8 @@ BEGIN
             e.Vector
         FROM
             MoviesCte AS mb
-            INNER JOIN EmbeddingsCte AS e ON e.MovieIndex = mb.MovieIndex
+            INNER JOIN EmbeddingsCte AS e
+                ON e.MovieIndex = mb.MovieIndex
     )
     -- Insert/update the MovieVector table with the generated vectors.
     MERGE MovieVector AS t
