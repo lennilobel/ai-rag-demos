@@ -20,23 +20,17 @@ BEGIN
     DECLARE @Message varchar(max)
 
     -- Process the movies in batches.
-    WHILE @CurrentPosition < @TotalCount
-    BEGIN
+    WHILE @CurrentPosition < @TotalCount BEGIN
 
         BEGIN TRY
 
             DECLARE @MoviesBatchJson json
 
-            -- Retrieve the next batch of movie JSON objects
-            -- and rebuild them as a native JSON array.
+            -- Retrieve the next batch of movie JSON objects and rebuild them as a native JSON array
             ;WITH BatchCte AS (
-                SELECT
-                    [key],
-                    value
-                FROM
-                    OPENJSON(@MoviesJson)
-                ORDER BY
-                    JSON_VALUE(value, '$.Title')
+                SELECT [key], value
+                FROM OPENJSON(@MoviesJson)
+                ORDER BY JSON_VALUE(value, '$.Title')
                 OFFSET @CurrentPosition ROWS
                 FETCH NEXT @BatchSize ROWS ONLY
             )
@@ -50,42 +44,27 @@ BEGIN
             FROM
                 BatchCte
 
-            -- Emit informational progress messages for each movie in the batch.
+		    -- Echo each movie title and ID in the batch using RAISERROR (will display on console)
             DECLARE @MovieJson json
 
             DECLARE curMovies CURSOR LOCAL FAST_FORWARD FOR
-                SELECT
-                    CONVERT(json, value)
-                FROM
-                    OPENJSON(@MoviesBatchJson)
-                ORDER BY
-                    CONVERT(int, [key])
+                SELECT CONVERT(json, value)
+                FROM OPENJSON(@MoviesBatchJson)
+                ORDER BY CONVERT(int, [key])
 
             OPEN curMovies
             FETCH NEXT FROM curMovies INTO @MovieJson
 
-            WHILE @@FETCH_STATUS = 0
-            BEGIN
-
-                SET @Message =
-                    CONCAT(
-                        'Vectorizing entity - ',
-                        JSON_VALUE(@MovieJson, '$.Title'),
-                        ' (ID ',
-                        JSON_VALUE(@MovieJson, '$.MovieId'),
-                        ')'
-                    )
-
+            WHILE @@FETCH_STATUS = 0 BEGIN
+                SET @Message = 'Vectorizing entity - ' || JSON_VALUE(@MovieJson, '$.Title') || ' (ID ' || JSON_VALUE(@MovieJson, '$.MovieId') || ')'
                 RAISERROR(@Message, 0, 1) WITH NOWAIT
-
                 FETCH NEXT FROM curMovies INTO @MovieJson
-
             END
 
             CLOSE curMovies
             DEALLOCATE curMovies
 
-            -- Vectorize the batch.
+            -- Vectorize the batch
             EXEC VectorizeMoviesBatch @MoviesBatchJson
 
         END TRY
@@ -101,12 +80,11 @@ BEGIN
 
         END CATCH
 
-        -- Advance to the next batch.
+        -- Advance to the next batch
         SET @CurrentPosition += @BatchSize
 
     END
 
-    -- If any batch failed, raise a terminating error after all processing completes.
     IF @ErrorCount > 0
         THROW 50000, 'One or more errors occurred vectorizing the movies data', 1
 

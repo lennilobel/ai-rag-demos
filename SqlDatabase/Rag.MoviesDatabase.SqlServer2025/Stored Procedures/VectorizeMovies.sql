@@ -5,16 +5,14 @@ BEGIN
 
 	SET NOCOUNT ON
 
-    DECLARE @MovieIds table (MovieId int)
-    INSERT INTO @MovieIds
-        SELECT CONVERT(int, value) AS MovieId
-        FROM STRING_SPLIT(@MovieIdsCsv, ',')
-
+    -- The UDF returns either a single JSON object (for a single movie) or a JSON array (for multiple movies).
 	DECLARE @MoviesJson json = dbo.GetMoviesJsonUdf(@MovieIdsCsv)
 
-	IF LEFT(CONVERT(nvarchar(max), @MoviesJson), 1) = '{'
-		SET @MoviesJson = CONVERT(json, CONCAT('[', CONVERT(nvarchar(max), @MoviesJson), ']'))
+    -- If a single movie is returned, wrap it as a single-element array.
+    IF JSON_PATH_EXISTS(@MoviesJson, '$.MovieId') = 1
+        SET @MoviesJson = JSON_ARRAY(@MoviesJson RETURNING json)
 
+	-- Open a cursor to process one movie at a time
 	DECLARE @MovieJson varchar(max)
 	DECLARE @ErrorCount int = 0
 
@@ -27,12 +25,14 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 
+		-- Echo current movie title and ID using RAISERROR (will display on console)
 		DECLARE @MovieId int = JSON_VALUE(@MovieJson, '$.MovieId')
 		DECLARE @Title varchar(max) = JSON_VALUE(@MovieJson, '$.Title')
 
 		DECLARE @Message varchar(max) = CONCAT('Vectorizing movie: ', @Title, ' (', @MovieId, ')')
 		RAISERROR(@Message, 0, 1) WITH NOWAIT
 
+		-- Generate a vector from the movie JSON using the configured embedding model
 		DECLARE @MovieVector vector(1536)
 
 		BEGIN TRY
@@ -41,6 +41,7 @@ BEGIN
 
 		END TRY
 
+		-- Handle vectorization error
 		BEGIN CATCH
 
 			RAISERROR('An error occurred attempting to vectorize the movie', 0, 1) WITH NOWAIT
@@ -52,6 +53,7 @@ BEGIN
 
 		END CATCH
 
+		-- Insert the vector for a newly vectorized movie, or replace the existing vector if one already exists
 		MERGE MovieVector AS t
 			USING (
 				SELECT
