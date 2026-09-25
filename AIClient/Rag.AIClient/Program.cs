@@ -349,9 +349,9 @@ namespace Rag.AIClient
 				SqlConnectionString = ragProvider.SqlConnectionString,
 				SqlCommandVariables = new Dictionary<string, string>
 				{
+					{ "StorageSasToken", Shared.AppConfig.AzureSql.StorageSasToken },
 					{ "OpenAIApiKey", Shared.AppConfig.AzureOpenAI.ApiKey },
-					{ "CesSasToken", Shared.AppConfig.ChangeEventStreaming.CesSasToken },
-					{ "StorageSasToken", Shared.AppConfig.ChangeEventStreaming.StorageSasToken },
+					{ "CesPolicyKey", Shared.AppConfig.ChangeEventStreaming.CesPolicyKey },
 				}
 			};
 

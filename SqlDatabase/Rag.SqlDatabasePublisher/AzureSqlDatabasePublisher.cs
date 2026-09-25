@@ -10,7 +10,7 @@ namespace Rag.SqlDatabasePublisher
 
 		protected override void SetPublishOptions(PublishOptions publishOptions, DatabasePublisherConfig config)
 		{
-			publishOptions.DeployOptions.SqlCommandVariableValues["CesSasToken"] = config.SqlCommandVariables["CesSasToken"];
+			publishOptions.DeployOptions.SqlCommandVariableValues["CesPolicyKey"] = config.SqlCommandVariables["CesPolicyKey"];
 			publishOptions.DeployOptions.SqlCommandVariableValues["StorageSasToken"] = config.SqlCommandVariables["StorageSasToken"];
 
 			publishOptions.DeployOptions.DatabaseSpecification = new DacAzureDatabaseSpecification

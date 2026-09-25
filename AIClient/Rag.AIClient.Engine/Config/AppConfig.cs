@@ -23,6 +23,7 @@ namespace Rag.AIClient.Engine.Config
 			public bool TrustServerCertificate { get; set; }
 			public string JsonInitialDataFilename { get; set; }
 			public string JsonUpdateDataFilename { get; set; }
+			public string StorageSasToken { get; set; }
 		}
 
 		public CosmosDbConfig CosmosDb { get; set; }
@@ -82,8 +83,7 @@ namespace Rag.AIClient.Engine.Config
 		public ChangeEventStreamingConfig ChangeEventStreaming { get; set; }
 		public class ChangeEventStreamingConfig
 		{
-			public string CesSasToken { get; set; }
-			public string StorageSasToken { get; set; }
+			public string CesPolicyKey { get; set; }
 		}
 
 		public LocalAIConfig LocalAI { get; set; }

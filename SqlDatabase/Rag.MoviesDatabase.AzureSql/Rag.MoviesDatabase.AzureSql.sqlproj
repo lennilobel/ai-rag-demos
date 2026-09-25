@@ -159,7 +159,7 @@
     <PreDeploy Include="Scripts\PreDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
-    <SqlCmdVariable Include="CesSasToken">
+    <SqlCmdVariable Include="CesPolicyKey">
       <DefaultValue>&lt;secret&gt;</DefaultValue>
       <Value>$(SqlCmdVar__2)</Value>
     </SqlCmdVariable>
