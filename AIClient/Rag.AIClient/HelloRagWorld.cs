@@ -201,7 +201,7 @@ namespace Rag.AIClient
 				TopP = 0.95f,               // Range is 0.0 to 2.0; temperature alternative; controls diversity of responses (1.0 is full random, lower values limit randomness)
 			};
 
-			var chatClient = openAIClient.GetChatClient("lenni-gpt-4o");
+			var chatClient = openAIClient.GetChatClient("lenni-chat");
 			var conversation = new List<ChatMessage>();
 
 			// Interact with the model by sending various prompts and displaying the answers
