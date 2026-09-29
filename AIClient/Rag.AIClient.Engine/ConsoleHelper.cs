@@ -77,6 +77,7 @@ namespace Rag.AIClient.Engine
 			Console.WriteLine(@$"   Database Server:   {provider.ServerName}");
 			Console.WriteLine(@$"   AI Models Source:  {AIModelsSourceFactory.AIModelsSourceType}");
 			Console.WriteLine(@$"   Embedding Model:   {AIModelsSourceFactory.GetEmbeddingModelName()}");
+			Console.WriteLine(@$"   Chat Model:        {Shared.AppConfig.AzureOpenAI.CompletionDeploymentName}");
 		}
 
 	}

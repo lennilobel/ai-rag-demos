@@ -28,7 +28,7 @@ namespace Rag.MoviesFunction.AzureSql
 
 		[Function("ProcessEvents")]
 		public void ProcessEvents(
-			[EventHubTrigger(eventHubName: "%EventHubName%", Connection = "EventHubConnection")]
+			[EventHubTrigger(eventHubName: "%EventHubName%", Connection = "EventHubConnectionString")]
 			EventData[] events)
 		{
 			foreach (var eventData in events)
